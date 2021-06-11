@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * SpringBoot自定义拦截器
  * @author lzp
  */
-//@Configuration
+@Configuration
 public class InterceptorConfiguration implements WebMvcConfigurer {
 
     /**

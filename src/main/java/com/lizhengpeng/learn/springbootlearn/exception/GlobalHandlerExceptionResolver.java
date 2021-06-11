@@ -1,5 +1,8 @@
 package com.lizhengpeng.learn.springbootlearn.exception;
 
+import com.lizhengpeng.learn.springbootlearn.exception.impl.BusinessException;
+import com.lizhengpeng.learn.springbootlearn.exception.impl.InternalServerException;
+import com.lizhengpeng.learn.springbootlearn.exception.impl.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,10 +24,42 @@ public class GlobalHandlerExceptionResolver implements HandlerExceptionResolver 
 
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
-        logger.info("系统监测到异常发生",e);
+        logger.info("GlobalHandlerExceptionResolver拦截到异常",e);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(new ResponseEntity("fail","接口调用失败"));
-        modelAndView.setView(new MappingJackson2JsonView());
+        if(clientAcceptHTML(httpServletRequest)){
+            if(e instanceof ResourceNotFoundException){
+                modelAndView.setViewName("404");
+            }else if(e instanceof BusinessException){
+                modelAndView.setViewName("business_error");
+            }else{
+                modelAndView.setViewName("error");
+            }
+        }else{
+            modelAndView.setView(new MappingJackson2JsonView());
+            modelAndView.addObject("status","fail");
+            if(e instanceof ResourceNotFoundException){
+                modelAndView.addObject("message","访问的资源不存在");
+            }else if(e instanceof BusinessException){
+                modelAndView.addObject("message",e.getMessage());
+            }else{
+                modelAndView.addObject("message","服务器内部发生错误");
+            }
+        }
         return modelAndView;
     }
+
+    /**
+     * 判断远程客户端是否支持HTML
+     * 若不支持html则统一返回JSON数据
+     * @param request
+     * @return
+     */
+    private boolean clientAcceptHTML(HttpServletRequest request){
+        String acceptText = request.getHeader("Accept") != null ? request.getHeader("Accept") : request.getHeader("accept");
+        if(acceptText == null){
+            return false;
+        }
+        return acceptText.indexOf("text/html") != -1;
+    }
+
 }

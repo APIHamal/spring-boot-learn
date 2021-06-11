@@ -1,5 +1,6 @@
 package com.lizhengpeng.learn.springbootlearn;
 
+import com.lizhengpeng.learn.springbootlearn.exception.impl.BusinessException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,18 @@ public class SpringBootLearnApplication {
     @GetMapping("/errors")
     public String print(int type){
         return "接收到参数:  "+String.valueOf(type);
+    }
+
+    @GetMapping("/business_exception")
+    public String business_exception(int type){
+        try{
+            if(type <= 10){
+                throw new BusinessException("type参数的值不允许小于10");
+            }
+            return "hello:  "+type;
+        }catch (Exception e){
+            throw e;
+        }
     }
 
     public static void main(String[] args) {
