@@ -41,11 +41,7 @@ public class GlobalErrorControllerHandler extends AbstractErrorController {
         HttpStatus status = getStatus(request);
         Map<String, Object> detailMap = getErrorAttributes(request,ErrorAttributeOptions.of(ErrorAttributeOptions.Include.values()));
         detailMap.forEach((k,v) -> {
-            if(v instanceof Throwable){
-                logger.info("exception:"+k,(Throwable)v);
-            }else{
-                logger.info(String.valueOf(v));
-            }
+            logger.info(String.valueOf(v));
         });
         if(status == HttpStatus.NOT_FOUND){
             throw new ResourceNotFoundException("访问的资源不存在");
