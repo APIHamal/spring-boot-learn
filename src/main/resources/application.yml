@@ -5,3 +5,13 @@ spring:
     name: SpringBootApplication
   thymeleaf:
     cache: false
+  #redis: #配置Redis服务器连接相关
+  #  host: 192.168.168.168
+  #  port: 6379
+  #  database: 0
+  #  connect-timeout: 2000
+  #  timeout: 3000
+  redis: #配置redis的哨兵模式
+    sentinel:
+      master: 890cluster #配置监控集群的名称
+      nodes: 192.168.168.168:26379 #sentinel节点的IP地址列表(逗号进行分隔)
